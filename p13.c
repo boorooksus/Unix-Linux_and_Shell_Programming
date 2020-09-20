@@ -138,7 +138,7 @@ int getWords(){
 	int cnt = 0;
 	while( (nread = read(infile, buffer, BUFFSIZE)) > 0){
 		for (int i = 0; i < nread; i++){
-			if (buffer[i] == ' ' || buffer[i] == '\n' || buffer[i] == '\0'){
+			if (buffer[i] == ' ' || buffer[i] == '\n' || buffer[i] == '\0' || buffer[i] == '\t'){
 				 wordcnt++;
 				 wordOffset[wordcnt] = cnt * 512 + i + 1;
 			}
