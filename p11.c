@@ -32,7 +32,7 @@ char *getoccupier(int roomno){
 	}
 	
 	/* 방이 비어있을 경우 */
-	if(namebuf[0] == ' ' && namebuf[1] == ' '){
+	if(namebuf[1] == ' '){
 		/* findfree를 위해 가장 방 번호가 작은 빈방인지 확인 */
 		if(roomno < minFreeRoom){
 			minFreeRoom = roomno;
@@ -55,15 +55,19 @@ char *getoccupier(int roomno){
 /* 빈 방 중 방 번호가 가장 작은 방 리턴 */
 int findfree(){
 	offset = 0;
+	minFreeRoom = NROOMS;
 	for(int j = 1; j<= NROOMS; j++){
 		getoccupier(j);
 	}
 	return minFreeRoom;
 }
 
+/* 방을 비우는 함수 */
+/* rn: 비우고자 하는 방 번호 */
 int freeroom(int rn){
 	
-	offset = NAMELENGTH * (rn - 1);
+	offset = NAMELENGTH * (rn - 1); /* 방 위치 offset */
+	/* 이름을 지우기 위한 문자열 */
 	char* blank = "                                        \n";
 	
 	/* file open */
@@ -83,9 +87,20 @@ int freeroom(int rn){
 	return 1;
 }
 
-int addguest(int rn, char* name){
-	ssize_t nread;
+/* 빈 방인지 조사하고 방을 채우는 함수 */
+/* rn: 방 번호, name: 게스트 이름 */
+int addguest(int rn, char* origname){
+	ssize_t nread;  /* 읽은 바이트 수 */
+	/* 방 위치 offset */
 	offset = NAMELENGTH * (rn - 1);
+	char name[41] = { ' ' };
+	name[40] = '\n';
+	
+	for(int i = 0; i < NAMELENGTH; i++){
+		if(origname[i] == '\0')
+			break;
+		name[i] = origname[i];
+	}
 	
 	/* file open */
 	if( infile == -1 && (infile = open("residents", O_RDWR)) == -1){
@@ -120,6 +135,7 @@ int addguest(int rn, char* name){
 	
 
 int main(){
+	/* 명령 입력 받기 */
 	printf("========== frontdesk ==========\n");
 	printf("1: getoccupier\n");
 	printf("2: freeroom\n");
@@ -129,6 +145,7 @@ int main(){
 	
 	char x = getchar();
 	
+	/* 명령 실행 */
 	if(x == '1') {
 		int j;
 		char *getoccupier (int), *p;
@@ -142,8 +159,7 @@ int main(){
 				printf("Error on room &d\n", j);
 			}
 		}
-	}
-	else if(x == '2'){
+	} else if(x == '2'){
 		printf("========== freeroom ==============\n");
 		printf("Input room number to free: ");
 		char y[2];
@@ -153,8 +169,7 @@ int main(){
 			printf("room %2d is free\n", rn);
 		else
 			printf("Error on freeroom\n");
-	}
-	else if(x == '3'){
+	} else if(x == '3'){
 		printf("========== addguest ==============\n");
 		printf("Input room number to add guest: ");
 		char y[2];
@@ -174,12 +189,12 @@ int main(){
 			printf("Room %2d is not empty\n", rn);
 		else
 			printf("Error on addguest\n");
-	}
-	else {
+	} else {
 		printf("============= findfree ===============\n");
-		printf("free roome is %2d\n", findfree());
+		int res = findfree();
+		if(res)
+			printf("free roome is %2d\n", findfree());
+		else
+			printf("Error on findfree\n");
 	}
-	
-	
-
 }
