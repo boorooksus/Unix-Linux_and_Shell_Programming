@@ -156,7 +156,7 @@ int main(){
 			if(p = getoccupier(j)){
 				printf("room %2d, %s\n", j, p);
 			} else{
-				printf("Error on room &d\n", j);
+				printf("Error on room %2d\n", j);
 			}
 		}
 	} else if(x == '2'){
