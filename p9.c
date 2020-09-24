@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#define NAMELENGTH 42
+#define NAMELENGTH 41
 #define NROOMS 10
 
 char namebuf[NAMELENGTH];  /* 문자열 저장 */
@@ -71,10 +71,11 @@ int main(){
 		if(p = getoccupier(j)){
 			printf("room %2d, %s\n", j, p);
 		} else{
-			printf("Error on room &d\n", j);
+			printf("Error on room %2d\n", j);
 		}
 	}
 	
 	printf("============= findfree ===============\n");
 	printf("free roome is %2d\n", findfree());
 }
+

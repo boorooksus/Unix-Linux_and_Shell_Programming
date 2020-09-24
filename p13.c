@@ -10,13 +10,14 @@
 
 int infile = -1; // 원본 파일 디스크립터
 int outfile = -1; // 복사 파일 디스크립터
-char *filename1 = "file1.txt"; // 원본 파일 이름
-char *filename2 = "file2.txt"; // 복사 파일 이름
+char *filename1 = "file1"; // 원본 파일 이름
+char *filename2 = "file2"; // 복사 파일 이름
 ssize_t nread;
 char buffer[BUFFSIZE];
 
 // 파일의 내용을 복사하는 함수
-// name1: 복사하는 파일, name2: 붙여넣기 하는 파일, offset: 파일의 복사 내용 위치, flag: lseek함수의 flag
+// name1: 복사하는 파일, name2: 붙여넣기 하는 파일, 
+// offset: 파일의 복사 내용 위치, flag: lseek함수의 flag
 int mycp(const char *name1, const char *name2, off_t offset, int flag){
 	// infile open
 	if ( (infile = open (name1, O_RDONLY)) == -1){
@@ -118,6 +119,7 @@ int getChars(){
 	
 	/* close the file */
 	close(infile);
+	return 1;
 }
 
 /* 마지막 10단어를 복사하는 함수 */
@@ -167,13 +169,23 @@ int main(int argc, char *argv[]){
 	printf("Input your command number: ");
 	
 	char x = getchar();
-	
-	if(x == '1')
-		getChars();
-	else if(x == '2')
-		getWords();
-	else
-		getLines();
+	int y = 0;
+
+	if(x == '1'){
+		y = getChars();
+		if(y < 0)
+			printf("Error is occured\n");
+	}
+	else if(x == '2'){
+		y = getWords();
+		if(y < 0)
+			printf("Error is occured\n");
+	}
+	else{
+		y = getLines();
+		if(y < 0)
+			printf("Error is occured\n");
+	}
 	
 	return 0;
 }
