@@ -16,7 +16,6 @@ int main(int argc, char *argv[]){
 	int filedes;  /* 파일 디스크립터 */
 	int cnt_word = 0;  /* 단어 개수 */
 	int cnt_line = 0;  /* 줄의 수 */
-	int total = 0;  /* 파일 크기 */
 	
 	ssize_t nread; /* 읽은 크기 */
 	
@@ -29,22 +28,20 @@ int main(int argc, char *argv[]){
 	}
 	
 	/* 파일 읽기 */
-	while( (nread = read(filedes, buffer, BUFSIZE)) > 0){
-		 total += nread;
-	}
-	
-	/* 단어, 줄의 개수 탐색 */
-	for (int i = 0; i < total; i++){
-		if(buffer[i] == '\n' || buffer[i] == ' ' || buffer[i] == '\t'){
-			cnt_word++;
-		}
-		if(buffer[i] == '\n'){
-			cnt_line++;
+	while( (nread = read(filedes, buffer, BUFSIZE)) > 0){ 
+		 /* 단어, 줄의 개수 탐색 */
+		for (int i = 0; i < nread; i++){
+			if( buffer[i] == '\n' || buffer[i] == ' ' || buffer[i] == '\t'){
+				cnt_word++;
+			}
+			if(buffer[i] == '\n'){
+				cnt_line++;
+			}
 		}
 	}
 	
-	printf("number of words: %ld\n", cnt_word + 1);
-	printf("number of lines: %ld\n", cnt_line + 1);
+	printf("number of words: %d\n", --cnt_word);
+	printf("number of lines: %d\n", --cnt_line);
 	exit(0);
 	
 }

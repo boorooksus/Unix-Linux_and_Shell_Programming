@@ -60,7 +60,7 @@ int mycp(const char *name1, const char *name2, off_t offset, int flag){
 // 파일의 마지막 10줄을 복사하는 함수
 int getLines(){
 	char buffer[BUFFSIZE]; // 문자열 저장
-	int linecnt = 0; // 줄의 총 개수 저장
+	int linecnt = 1; // 줄의 총 개수 저장
 	int lineOffset[500]; // 각 줄의 시작 위치 저장
 	
 	/* 첫 번째 줄의 시작 위치는 0 */
@@ -77,7 +77,7 @@ int getLines(){
 		 for (int i = 0; i < BUFFSIZE; i++){
 			 if (buffer[i] == '\n'){
 				 linecnt++;
-				 lineOffset[linecnt] = cur * 512 + i + 1;
+				 lineOffset[linecnt] = cur * BUFFSIZE + i + 1;
 			 }
 		 }
 		 cur++;
@@ -91,7 +91,7 @@ int getLines(){
 	}
 	
 	/* 뒤에서 10번째 줄의 시작 위치부터 복사 */
-	mycp(filename1, filename2, lineOffset[linecnt - 9], 0);
+	mycp(filename1, filename2, lineOffset[linecnt - 10], 0);
 	return 1;
 }
 
@@ -126,7 +126,7 @@ int getChars(){
 int getWords(){
 	char buffer[BUFFSIZE]; /* 문자열 저장 */
 	ssize_t nread; /* read함수가 읽은 바이트 수 */
-	int wordcnt = 0; /* 총 단어의 개수 */
+	int wordcnt = 1; /* 총 단어의 개수 */
 	int wordOffset[500]; /* 각 단어의 시작 위치 저장 */
 	
 	wordOffset[1] = 0; /* 첫 번째 단어의 시작 위치는 0 */
@@ -142,7 +142,7 @@ int getWords(){
 		for (int i = 0; i < nread; i++){
 			if (buffer[i] == ' ' || buffer[i] == '\n' || buffer[i] == '\0' || buffer[i] == '\t'){
 				 wordcnt++;
-				 wordOffset[wordcnt] = cnt * 512 + i + 1;
+				 wordOffset[wordcnt] = cnt * BUFFSIZE + i + 1;
 			}
 		}
 		cnt++;
@@ -155,7 +155,7 @@ int getWords(){
 	}
 	/* 뒤에서부터 10단어 복사 */
 	else{
-		mycp(filename1, filename2, wordOffset[wordcnt - 9], 0);
+		mycp(filename1, filename2, wordOffset[wordcnt - 10], 0);
 		return 1;
 	}
 
@@ -173,7 +173,7 @@ int main(int argc, char *argv[]){
 
 	if(x == '1'){
 		y = getChars();
-		if(y < 0)
+		if(y  < 0)
 			printf("Error is occured\n");
 	}
 	else if(x == '2'){
