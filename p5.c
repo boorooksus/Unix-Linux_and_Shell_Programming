@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
 	while( (nread = read(filedes, buffer, BUFSIZE)) > 0){ 
 		 /* 단어, 줄의 개수 탐색 */
 		for (int i = 0; i < nread; i++){
-			if( buffer[i] == '\n' || buffer[i] == ' ' || buffer[i] == '\t'){
+			if(last == 0 && buffer[i] == '\n' || buffer[i] == ' ' || buffer[i] == '\t'){
 				cnt_word++;
 			}
 			if(buffer[i] == '\n'){
@@ -40,8 +40,8 @@ int main(int argc, char *argv[]){
 		}
 	}
 	
-	printf("number of words: %d\n", --cnt_word);
-	printf("number of lines: %d\n", --cnt_line);
+	printf("number of words: %d\n", cnt_word);
+	printf("number of lines: %d\n", cnt_line);
 	exit(0);
 	
 }
