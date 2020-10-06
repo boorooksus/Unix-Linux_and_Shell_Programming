@@ -11,7 +11,6 @@ int lsoct(char perm[]){
 		int temp = 0;
 		for(int j = 2; j >= 0; j--){
 			if (perm[i + 2 - j] != '-'){
-				
 				int sqrt = 1;
 				for(int k = 0; k < j; k++){
 					sqrt *= 2;
@@ -93,7 +92,21 @@ char *octls(char* perm){
 }
 
 int main(int argc, char *argv[]){
-	//printf("%d", lsoct(argv[1]));
+	/* 명령이 잘못된 경우 */
+	if(argc != 3) {
+		printf("Wrong input. Usage : %s <lsoct or octls> <permission>\n", argv[0]);
+		return 0;
+	}
 	
-	printf("%s\n", octls((argv[1])));
+	if(argv[1][0] == 'l'){
+		printf("%d\n", lsoct(argv[2]));
+	}
+	else if(argv[1][0] == 'o'){	
+		printf("%s\n", octls((argv[2])));
+	}
+	else{
+		printf("Wrong input\n");
+	}
+	
+	return 0;
 }
