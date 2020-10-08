@@ -21,12 +21,11 @@ int my_double_ls(const char *name){
 			char fullpath[PATH_MAX];
 			sprintf(fullpath, "%s/%s", name, d->d_name);
 			
+			/* file stat */
 			if(stat(fullpath, &sb) == -1){
 				fprintf(stderr, "lookout: couldn't stat %s\n", d->d_name);
 			}
-			//exit(1);
-			//continue;
-			//stat(d->d_name, &sb);
+			/* 디렉토리 파일인 경우 별모양 추가 */
 			if(S_ISDIR(sb.st_mode)){
 				printf("*\n");
 			} else{
@@ -46,13 +45,11 @@ int my_double_ls(const char *name){
 			/* stat 호출 */
 			char fullpath[PATH_MAX];
 			sprintf(fullpath, "%s/%s", name, d->d_name);
-			
+			/* file stat */
 			if(stat(fullpath, &sb) == -1){
 				fprintf(stderr, "lookout: couldn't stat %s\n", d->d_name);
 			}
-			//exit(1);
-			//continue;
-			//stat(d->d_name, &sb);
+			/* 디렉토리 파일인 경우 별모양 추가 */
 			if(S_ISDIR(sb.st_mode)){
 				printf("*\n");
 			} else{
@@ -71,7 +68,6 @@ int main(int argc, char *argv[]){
 		printf("Wrong input. Usage : %s <directoryname> \n", argv[0]);
 		return 0;
 	}
-	
 	
 	my_double_ls(argv[1]);
 }
