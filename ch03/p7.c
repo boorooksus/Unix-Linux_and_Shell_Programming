@@ -1,6 +1,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <sys/stat.h>
+#include <stdlib.h>
 
 /* 파일의 permission을 알려주는 함수 */
 void whatable(char* filename){
@@ -67,7 +69,5 @@ int main(int argc, char *argv[]){
 	if(setperm(argv[1], perm) == -1){
 		printf("Error is occured\n");
 	}
-	/* 결과 파일의 권한 출력 */
-	whatable(argv[1]);
 	
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdlib.h>
 
 char ls[10]; /* 변환한 permission 문자열 저장 */
 

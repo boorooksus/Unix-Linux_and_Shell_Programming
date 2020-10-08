@@ -1,5 +1,6 @@
 #include <dirent.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /* 디렉토리 항목 두 번 프린트하는 함수 */
 int my_double_ls(const char *name, int skip){
