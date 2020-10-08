@@ -4,8 +4,9 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-#define MFILE 10
+#define MFILE 10 /* 입력 파일 최대 개수 */
 #define BUFSIZE 512
+#define INTERVAL 3 /* 모니터링 시간 간격 */
 
 void cmp(const char *, time_t, int j);
 void slowwatch(int argc, char* argv[]);
@@ -14,13 +15,12 @@ time_t last_time[MFILE + 1];
 void fileread(const char *);
 
 int main(int argc, char *argv[]){
-
-	
+	/* 명령이 잘못된 경우 */
 	if(argc <2){
 		fprintf(stderr, "usage: lookout filename ...\n");
 		exit(1);
 	}
-	
+	/* 입력 파일이 너무 많은 경우 */
 	if(argc > MFILE){
 		fprintf(stderr, "lookout: too many filenames\n");
 		exit(1);
@@ -31,17 +31,10 @@ int main(int argc, char *argv[]){
 
 void slowwatch(int argc, char* argv[]){
 	int j;
-	
 	/* 초기화 */
 	for(j = 1; j < argc; j++){
-		/*
-		printf("argc: %d\n", argc);
-		printf("filename: %s\n", argv[j]);
-		*/
 		if(stat(argv[j], &sb) == -1){
 			fprintf(stderr, "lookout: couldn't stat %s\n", argv[j]);
-			//exit(1);
-			//continue;
 		}
 		last_time[j] = sb.st_mtime;
 	}
@@ -50,7 +43,7 @@ void slowwatch(int argc, char* argv[]){
 	for(;;){
 		for(j = 1; j < argc; j++)
 			cmp(argv[j], last_time[j], j);
-		sleep(3);
+		sleep(INTERVAL);
 	}
 	
 }
@@ -58,10 +51,10 @@ void slowwatch(int argc, char* argv[]){
 void cmp(const char *name, time_t last, int j) {
 	/* 변경시간 검사*/
 	if (stat(name, &sb) == -1 || sb.st_mtime != last){
+		/* 파일 변경이 감지되면 텍스트 출력 후 마지막 수정 시간 저장 */
 		fprintf(stderr, "lookout: %s changed\n", name);
 		last_time[j] = sb.st_mtime;
 		fileread(name);
-		//exit(0);
 	}
 }
 
@@ -79,8 +72,6 @@ void fileread(const char *filename){
 	/* 파일 읽기 */
 	while( (nread = read(filedes, buffer, BUFSIZE - 1)) > 0){ 
 		buffer[nread] = '\0';
-		//for(int i = 0; i < nread; i++)
-			//printf("%c", buffer[i]);
 		fprintf(stderr, "contents:\n%s", buffer);
 	}
 	printf("\n");

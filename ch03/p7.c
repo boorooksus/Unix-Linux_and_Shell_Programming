@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 
+/* 파일의 permission을 알려주는 함수 */
 void whatable(char* filename){
 	if (access (filename, R_OK) == -1){
 		perror("reading: ");
@@ -22,6 +23,7 @@ void whatable(char* filename){
 	}
 }
 
+/* 문자열 permission을 정수 형태로 변경하는 함수 */
 int lsoct(char perm[]){
 	int bi = 0b0;
 	int cur = 0b1;
@@ -35,6 +37,7 @@ int lsoct(char perm[]){
 	
 }
 
+/* permission 변경 함수 */
 int setperm(char* filename, int perm){
 	if(chmod(filename, perm) == -1){
 		perror("Error: ");
@@ -52,18 +55,19 @@ int main(int argc, char *argv[]){
 	}
 	
 	int perm = 00;
-	
+	/* permission이 문자열로 입력된 경우 */
 	if(argv[2][0] == 'r' || argv[2][0] == '-'){
 		perm = lsoct(argv[2]);
-	} else{
-		//perm += atoi(argv[2]);
+	} 
+	/* permission이 8진수로 입력된 경우 */
+	else{
 		perm = strtol(argv[2], NULL, 8);
 	}
-	
+	/* permission이 변경 */
 	if(setperm(argv[1], perm) == -1){
 		printf("Error is occured\n");
 	}
-	
+	/* 결과 파일의 권한 출력 */
 	whatable(argv[1]);
 	
 }
