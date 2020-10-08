@@ -33,6 +33,12 @@ void slowwatch(int argc, char* argv[]){
 	int j;
 	/* 초기화 */
 	for(j = 1; j < argc; j++){
+		/* if the file is not exist */
+		if(access(argv[j], F_OK) == -1){
+			last_time[j] = 0;
+			continue;
+		}
+		/* get st_mtime */
 		if(stat(argv[j], &sb) == -1){
 			fprintf(stderr, "lookout: couldn't stat %s\n", argv[j]);
 		}
@@ -50,7 +56,7 @@ void slowwatch(int argc, char* argv[]){
 
 void cmp(const char *name, time_t last, int j) {
 	/* 변경시간 검사*/
-	if (stat(name, &sb) == -1 || sb.st_mtime != last){
+	if (access(name, F_OK) != -1 && (stat(name, &sb) == -1 || sb.st_mtime != last)){
 		/* 파일 변경이 감지되면 텍스트 출력 후 마지막 수정 시간 저장 */
 		fprintf(stderr, "lookout: %s changed\n", name);
 		last_time[j] = sb.st_mtime;
