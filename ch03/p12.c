@@ -73,7 +73,7 @@ int main(int argc, char *argv[]){
 	int i = 0; /* 현재 while문의 인덱스 */
 	
 	/* 두 번째 인자 문자열의 각 문자 탐색 */
-	/* 두 번째 인자: [who][+|-+=][mode...] 구조 */
+	/* 두 번째 인자: [who][+|-|=][mode...] 구조 */
 	while(1){
 		/* who 알아내기 */
 		if(argv[1][i] == 'u')
