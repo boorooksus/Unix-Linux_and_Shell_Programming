@@ -3,6 +3,7 @@
 #include <stdio.h>
  #include <sys/stat.h>
  #include <stdlib.h>
+ #include <unistd.h>
  
  struct stat sb;
 
@@ -43,6 +44,7 @@ int main(int argc, char *argv[]){
 	/* 문자열 permission이 입력된 경우 */
 	if(argv[1][0] == '-' || argv[1][0] =='r'){
 		mode = lsoct(argv[1]);
+		sleep(0.1);
 		if (chmod(argv[2], mode)){
 			return 2;
 		}
@@ -119,10 +121,19 @@ int main(int argc, char *argv[]){
 			if (chmod(argv[2], res)){
 				return 2;
 			}
+						
 			/* 변수 초기화 */
 			target = 0b0;
 			permission = 0b0;
 			op = 0;
+			res = 0b0;
+			/* file stat */
+			if(stat(argv[2], &sb) == -1){
+				perror("Error: ");
+				return 3;
+			}
+			cur = sb.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+			sleep(0.1);
 		} 
 		/* 잘못된 입력이 있는 경우 */
 		else{
