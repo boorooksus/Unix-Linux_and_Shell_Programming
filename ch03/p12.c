@@ -89,7 +89,7 @@ int main(int argc, char *argv[]){
 		/* 연산자 알아내기 */
 		else if(argv[1][i] == '+')
 			op = 1;
-		else if(argv[1][i] == '-' && i > 0 && (argv[1][i-1] == 'u' || argv[1][i-1] == 'g' || argv[1][i-1] == '0'))
+		else if(argv[1][i] == '-' && i > 0 && (argv[1][i-1] == 'u' || argv[1][i-1] == 'g' || argv[1][i-1] == 'o' || argv[1][i-1] == 'a'))
 			op = 2;
 		else if(argv[1][i] == '=')
 			op = 3;
