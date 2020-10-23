@@ -61,6 +61,7 @@ int main(int argc, char**argv){
 	} else if(strcmp(cmdvector[0], "exit") == 0 ){
 		exit(0);
 	} else if(strcmp(cmdvector[numtokens - 1], "&") == 0){
+		//fputs("in Background!! \n", stdout);
 		cmdvector[numtokens - 1] = NULL;
 		
 		switch(pid=fork()){
@@ -74,7 +75,7 @@ int main(int argc, char**argv){
 		switch(pid=fork()){
 		case 0:
 			//fputs("This is child \n", stdout);
-			makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
+			//makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
 			//fputs("after makelist \n", stdout);
 			//fputs("cmdvector[0]: ", stdout);
 			//fputs(cmdvector[0], stdout);
@@ -83,8 +84,8 @@ int main(int argc, char**argv){
 			//fputs(cmdvector[1], stdout);
 			//fputs("\n", stdout);
 			execvp(cmdvector[0], cmdvector);
-			fputs("after execvp \n", stdout);
 			fatal("main()");
+			//fputs("after execvp \n", stdout);
 			//exit(directory);
 		case -1:
 			fatal("main()");
