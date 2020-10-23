@@ -54,8 +54,9 @@ int main(int argc, char**argv){
 	cmdline[strlen(cmdline) -1] = '\0';
 	
 	numtokens = makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
-	
-	if(strcmp(cmdvector[0], "cd") == 0 ){
+	if(numtokens == 0){
+		continue;
+	}else if(strcmp(cmdvector[0], "cd") == 0 ){
 		cd(cmdvector[1]);
 		continue;
 	} else if(strcmp(cmdvector[0], "exit") == 0 ){
