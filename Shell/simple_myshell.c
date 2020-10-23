@@ -9,6 +9,7 @@ const char *prompt = "myshell> ";
 char* cmdvector[MAX_CMD_ARG];
 char  cmdline[BUFSIZ];
 //static char directory[1024];
+int numtokens = 0;
 
 void fatal(char *str){
 	perror(str);
@@ -52,36 +53,47 @@ int main(int argc, char**argv){
 	fgets(cmdline, BUFSIZ, stdin);
 	cmdline[strlen(cmdline) -1] = '\0';
 	
-	makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
+	numtokens = makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
+	
 	if(strcmp(cmdvector[0], "cd") == 0 ){
 		cd(cmdvector[1]);
 		continue;
 	} else if(strcmp(cmdvector[0], "exit") == 0 ){
-		return 0;
-	}
-  
-	switch(pid=fork()){
-	case 0:
-		//fputs("This is child \n", stdout);
-		makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
-		//fputs("after makelist \n", stdout);
-		//fputs("cmdvector[0]: ", stdout);
-		//fputs(cmdvector[0], stdout);
-		//fputs("\n", stdout);
-		//fputs("cmdvector[1]: ", stdout);
-		//fputs(cmdvector[1], stdout);
-		//fputs("\n", stdout);
-		execvp(cmdvector[0], cmdvector);
-		fputs("after execvp \n", stdout);
-		fatal("main()");
-		//exit(directory);
-	case -1:
-  		fatal("main()");
-	default:
-		//fputs("pid: ", stdout);
-		//fputs(pid, stdout);
-		//fputs("hi \n", stdout);
-		wait(NULL);
+		exit(0);
+	} else if(strcmp(cmdvector[numtokens - 1], "&") == 0){
+		cmdvector[numtokens - 1] = NULL;
+		
+		switch(pid=fork()){
+			case 0:
+				execvp(cmdvector[0], cmdvector);
+				fatal("main()");
+			case -1:
+				fatal("main()");
+		}
+	} else{
+		switch(pid=fork()){
+		case 0:
+			//fputs("This is child \n", stdout);
+			makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
+			//fputs("after makelist \n", stdout);
+			//fputs("cmdvector[0]: ", stdout);
+			//fputs(cmdvector[0], stdout);
+			//fputs("\n", stdout);
+			//fputs("cmdvector[1]: ", stdout);
+			//fputs(cmdvector[1], stdout);
+			//fputs("\n", stdout);
+			execvp(cmdvector[0], cmdvector);
+			fputs("after execvp \n", stdout);
+			fatal("main()");
+			//exit(directory);
+		case -1:
+			fatal("main()");
+		default:
+			//fputs("pid: ", stdout);
+			//fputs(pid, stdout);
+			//fputs("hi \n", stdout);
+			wait(NULL);
+		}
 	}
   }
   return 0;
