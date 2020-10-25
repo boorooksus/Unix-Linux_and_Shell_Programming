@@ -46,7 +46,6 @@ int main(int argc, char**argv){
 	cmdline[strlen(cmdline) -1] = '\0';
 	
 	numtokens = makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
-	char * pch = strchr(cmdvector[numtokens - 1], '&');
 	
 	if(numtokens == 0){
 		continue;
@@ -59,9 +58,11 @@ int main(int argc, char**argv){
 			exit(0);
 		else
 			exit(atoi(cmdvector[1]));
-	} else if(pch && cmdvector[numtokens - 1][pch - cmdvector[numtokens - 1] + 1] == '\0'){
-		strtok(cmdvector[numtokens - 1], "&");
-		
+	} else if(cmdvector[numtokens - 1][strlen(cmdvector[numtokens - 1]) - 1] == '&'){
+		if(strlen(cmdvector[numtokens - 1]) == 1)
+			cmdvector[numtokens - 1] = NULL;
+		else
+			cmdvector[numtokens - 1][strlen(cmdvector[numtokens - 1]) - 1] = '\0';
 		switch(pid=fork()){
 			case 0:
 				execvp(cmdvector[0], cmdvector);
