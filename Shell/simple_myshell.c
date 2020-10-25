@@ -8,7 +8,6 @@
 const char *prompt = "myshell> ";
 char* cmdvector[MAX_CMD_ARG];
 char  cmdline[BUFSIZ];
-//static char directory[1024];
 int numtokens = 0;
 
 void fatal(char *str){
@@ -38,13 +37,6 @@ int makelist(char *s, const char *delimiters, char** list, int MAX_LIST){
   return numtokens;
 }
 
-int cd(char* dir){
-	if(chdir(dir) == -1){
-		fatal("main()");
-	}
-	return 0;
-}
-
 int main(int argc, char**argv){
   int i=0;
   pid_t pid;
@@ -57,12 +49,12 @@ int main(int argc, char**argv){
 	if(numtokens == 0){
 		continue;
 	}else if(strcmp(cmdvector[0], "cd") == 0 ){
-		cd(cmdvector[1]);
-		continue;
+		if(chdir(cmdvector[1]) == -1){
+			fatal("main()");
+		}
 	} else if(strcmp(cmdvector[0], "exit") == 0 ){
 		exit(0);
 	} else if(strcmp(cmdvector[numtokens - 1], "&") == 0){
-		//fputs("in Background!! \n", stdout);
 		cmdvector[numtokens - 1] = NULL;
 		
 		switch(pid=fork()){
@@ -75,25 +67,11 @@ int main(int argc, char**argv){
 	} else{
 		switch(pid=fork()){
 		case 0:
-			//fputs("This is child \n", stdout);
-			//makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
-			//fputs("after makelist \n", stdout);
-			//fputs("cmdvector[0]: ", stdout);
-			//fputs(cmdvector[0], stdout);
-			//fputs("\n", stdout);
-			//fputs("cmdvector[1]: ", stdout);
-			//fputs(cmdvector[1], stdout);
-			//fputs("\n", stdout);
 			execvp(cmdvector[0], cmdvector);
 			fatal("main()");
-			//fputs("after execvp \n", stdout);
-			//exit(directory);
 		case -1:
 			fatal("main()");
 		default:
-			//fputs("pid: ", stdout);
-			//fputs(pid, stdout);
-			//fputs("hi \n", stdout);
 			wait(NULL);
 		}
 	}
