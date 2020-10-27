@@ -45,24 +45,38 @@ int main(int argc, char**argv){
 	fgets(cmdline, BUFSIZ, stdin);
 	cmdline[strlen(cmdline) -1] = '\0';
 	
+	/* 명령을 받은 직후 makelist 실행 */
+	/* numtokens: command line 단어 개수 */
 	numtokens = makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
 	
+	/* 명령 내용이 없는 경우 */
 	if(numtokens == 0){
 		continue;
-	}else if(strcmp(cmdvector[0], "cd") == 0 ){
+	}
+	/* cd 명령어가 입력된 경우 */
+	else if(strcmp(cmdvector[0], "cd") == 0 ){
 		if(chdir(cmdvector[1]) == -1){
 			fatal("main()");
 		}
-	} else if(strcmp(cmdvector[0], "exit") == 0 ){
+	} 
+	/* exit 명령어가 입력된 경우 */
+	else if(strcmp(cmdvector[0], "exit") == 0 ){
+		/* 인자 존재 여부에 따라 exit status 설정 */
 		if(numtokens == 1)
 			exit(0);
 		else
-			exit(atoi(cmdvector[1]));
-	} else if(cmdvector[numtokens - 1][strlen(cmdvector[numtokens - 1]) - 1] == '&'){
+			exit(atoi(cmdvector[1])); /* exit status 와 함께 종료 */
+	} 
+	/* 백그라운드로 실행 */
+	else if(cmdvector[numtokens - 1][strlen(cmdvector[numtokens - 1]) - 1] == '&'){	
+		/* 명령 수행을 위해 '&'기호 제거 */
 		if(strlen(cmdvector[numtokens - 1]) == 1)
 			cmdvector[numtokens - 1] = NULL;
 		else
 			cmdvector[numtokens - 1][strlen(cmdvector[numtokens - 1]) - 1] = '\0';
+		
+		/* child process 생성 후 명령 실행 */
+		/* (parent process는 wait()을 호출하지 않는다) */
 		switch(pid=fork()){
 			case 0:
 				execvp(cmdvector[0], cmdvector);
@@ -70,7 +84,11 @@ int main(int argc, char**argv){
 			case -1:
 				fatal("main()");
 		}
-	} else{
+	} 
+	/* 위에 해당사항이 없을 때 */
+	else{
+		/* child process 생성 후 명령 실행 */
+		/* (parent process는 wait()으로 child process 수행을 기다린다.) */
 		switch(pid=fork()){
 		case 0:
 			execvp(cmdvector[0], cmdvector);
