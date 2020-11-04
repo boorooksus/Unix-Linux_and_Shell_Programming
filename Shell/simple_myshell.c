@@ -58,8 +58,6 @@ int main(int argc, char**argv){
   /* SIGINT, SIGQUIT에 쉘 종료되지 않게 설정 */
   signal(SIGINT, sighandler);
   signal(SIGQUIT, sighandler);
-  /* 자식 프로세스 종료 시 wait() 실행되도록 설정 */
-  signal(SIGCHLD, sigchldhandler);
   
   while (1) {
   	fputs(prompt, stdout);
@@ -104,6 +102,9 @@ int main(int argc, char**argv){
 				fatal("main()");
 			case -1:
 				fatal("main()");
+			default:
+				/* 자식 프로세스 종료 시 wait() 실행되도록 설정 */
+				signal(SIGCHLD, sigchldhandler);
 		}
 	} 
 	/* 위에 해당사항이 없을 때 */
