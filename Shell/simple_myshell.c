@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 #define MAX_CMD_ARG 10
 #define BUFSIZ 256
 
@@ -9,6 +10,7 @@ const char *prompt = "myshell> ";
 char* cmdvector[MAX_CMD_ARG];
 char  cmdline[BUFSIZ];
 int numtokens = 0;
+pid_t pid = -1; /* pid를 글로벌 변수로 변경 */
 
 void fatal(char *str){
 	perror(str);
@@ -37,9 +39,28 @@ int makelist(char *s, const char *delimiters, char** list, int MAX_LIST){
   return numtokens;
 }
 
+/* 시그널 핸들러 */
+void sighandler(int signal){
+	/* 자식 프로세스인 경우에만 exit */
+	if(pid == 0){
+		exit(0);
+	}
+}
+
+/* SIGCHLD 시그널 핸들러 */
+void sigchldhandler(int signal){
+	wait(NULL);
+}
+
 int main(int argc, char**argv){
   int i=0;
-  pid_t pid;
+  
+  /* SIGINT, SIGQUIT에 쉘 종료되지 않게 설정 */
+  signal(SIGINT, sighandler);
+  signal(SIGQUIT, sighandler);
+  /* 자식 프로세스 종료 시 wait() 실행되도록 설정 */
+  signal(SIGCHLD, sigchldhandler);
+  
   while (1) {
   	fputs(prompt, stdout);
 	fgets(cmdline, BUFSIZ, stdin);
