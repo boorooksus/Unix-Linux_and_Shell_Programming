@@ -11,6 +11,12 @@ char* cmdvector[MAX_CMD_ARG];
 char  cmdline[BUFSIZ];
 int numtokens = 0;
 pid_t pid = -1; /* pid를 글로벌 변수로 변경 */
+char* cmdpipe;
+char  cmdline2[BUFSIZ];
+char* cmdvector2[MAX_CMD_ARG];
+char* pch;
+int numtokens2 = 0;
+int p[2], status;
 
 void fatal(char *str){
 	perror(str);
@@ -64,9 +70,12 @@ int main(int argc, char**argv){
 	fgets(cmdline, BUFSIZ, stdin);
 	cmdline[strlen(cmdline) -1] = '\0';
 	
+	/* cmdline 복사 */
+	strncpy(cmdline2, cmdline, sizeof(cmdline2));
+	
 	/* 명령을 받은 직후 makelist 실행 */
 	/* numtokens: command line 단어 개수 */
-	numtokens = makelist(cmdline, " \t", cmdvector, MAX_CMD_ARG);
+	numtokens = makelist(cmdline, " \t|", cmdvector, MAX_CMD_ARG);
 	
 	/* 명령 내용이 없는 경우 */
 	if(numtokens == 0){
@@ -86,6 +95,48 @@ int main(int argc, char**argv){
 		else
 			exit(atoi(cmdvector[1])); /* exit status 와 함께 종료 */
 	} 
+	
+	/* 파이프 있을 때 */
+	else if(pch = strchr(cmdline2, '|')){
+	
+		numtokens2 = makelist(pch + 1, " \t", cmdvector2, MAX_CMD_ARG);
+		
+		cmdvector[numtokens - numtokens2] = NULL;
+		
+		/* parent process */
+		switch(pid=fork()){
+		case 0:
+			break;
+		case -1:
+			fatal("main() pipe first fork ");
+		default:
+			wait(&status);
+			return(status);
+		}
+		if(pipe(p) == -1){
+			fatal("main() pipe call ");
+		}
+		
+		/* child process */
+		switch(pid=fork()){
+		case 0:
+			dup2 (p[1], 1);
+			close(p[0]);
+			//close(p[1]);
+			execvp(cmdvector[0], cmdvector);
+			fatal("main() pipe child ");
+		case -1:
+			fatal("main() pipe second fork ");
+		default:
+			dup2 (p[0], 0);
+			//close(p[0]);
+			close(p[1]);
+			execvp(cmdvector2[0], cmdvector2);
+			fatal("main() pipe parent ");
+		}
+		
+	}
+	
 	/* 백그라운드로 실행 */
 	else if(cmdvector[numtokens - 1][strlen(cmdvector[numtokens - 1]) - 1] == '&'){	
 		/* 명령 수행을 위해 '&'기호 제거 */
