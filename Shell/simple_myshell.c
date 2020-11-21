@@ -65,6 +65,9 @@ int main(int argc, char**argv){
   signal(SIGINT, sighandler);
   signal(SIGQUIT, sighandler);
   
+  //signal(SIGPIPE, sighandler);
+  //signal(SIGCHLD, sigchldhandler);
+  
   while (1) {
   	fputs(prompt, stdout);
 	fgets(cmdline, BUFSIZ, stdin);
@@ -111,7 +114,7 @@ int main(int argc, char**argv){
 			fatal("main() pipe first fork ");
 		default:
 			wait(&status);
-			return(status);
+			continue;
 		}
 		if(pipe(p) == -1){
 			fatal("main() pipe call ");
